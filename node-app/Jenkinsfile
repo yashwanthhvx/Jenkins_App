@@ -27,7 +27,7 @@ pipeline {
     stage('Execute the Bash Script to docker login and save image') {
       steps {
         dir('node-app') {
-          sh 'bash docker-credentials.sh'
+          sh 'sudo bash docker-credentials.sh'
           sh 'sudo docker tag node-app1:latest hvxuser/jenkins'
           sh 'sudo push hvxuser/jenkins'
         }
