@@ -11,7 +11,7 @@ pipeline {
     stage('Build Docker image') {
       steps {
         dir('node-app') {
-        sh 'sudo docker build -t node-app1:latest .'
+        sh 'sudo docker build -t node-app:latest .'
         }
       }
     }
@@ -19,8 +19,7 @@ pipeline {
     stage('Run Docker container') {
       steps {
         dir('node-app') {
-        sh 'sudo docker run --name node-app -p 80:3000 -d node-app1:latest'
-        sh 'sudo docker start node-app'
+        sh 'sudo docker run -p 80:3000 -d node-app:latest'
         }
       }
     }
