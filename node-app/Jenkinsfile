@@ -32,6 +32,15 @@ pipeline {
           sh 'sudo docker push hvxuser/jenkins'
         }
       }
+     }
+      
+     stage('Deploy the image to Kubernetes') {
+      steps {
+        dir('node-app') {
+           sh 'sudo kubectl apply -f k8-deployment.yml'
+           sh 'sudo kubectl apply -f k8-service.yml'
+        }
+      }
     }
   }
 }
