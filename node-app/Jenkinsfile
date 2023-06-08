@@ -22,6 +22,14 @@ pipeline {
         sh 'sudo docker run -p 80:3000 -d node-app:latest'
         }
       }
+    }  
+    
+     stage('Execute the Bash Script to docker login'){
+      steps {
+        dir('node-app') {
+        sh 'bash docker-credentials.sh'
+        }
+      }
     }
   }
 }
