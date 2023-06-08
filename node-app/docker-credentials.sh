@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "yashwanth.s" | docker login --username yashwanth.s --password-stdin <<< "payoda@123"
+echo "hvxuser" | docker login --username hvxuser --password-stdin <<< "payoda@123"
