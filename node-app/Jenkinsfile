@@ -10,8 +10,8 @@ pipeline {
 
     stage('Build Docker image') {
       steps {
-        sh 'cd /var/lib/jenkins/workspace/Docker/node-app'
-        sh 'sudo docker build -t node-app1:latest .'
+        sh ''
+        sh 'sudo docker build -t node-app1:latest /node-app/.'
       }
     }
 
