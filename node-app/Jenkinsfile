@@ -32,13 +32,42 @@ pipeline {
           sh 'sudo docker push hvxuser/jenkins'
         }
       }
-     }
-      
-     stage('Deploy the image to Kubernetes') {
+    }
+
+    stage('Create Kubernetes Deployment') {
       steps {
         dir('node-app') {
-           sh 'sudo kubectl apply -f k8-deployment.yml'
-           sh 'sudo kubectl apply -f k8-service.yml'
+          script {
+            def deployCmd = "sudo kubectl apply -f k8-deployment.yml"
+            def deployStatus = sh(script: deployCmd, returnStatus: true)
+
+            if (deployStatus == 0) {
+              echo "Kubernetes deployment succeeded"
+              currentBuild.result = 'SUCCESS'
+            } else {
+              echo "Kubernetes deployment failed"
+              currentBuild.result = 'FAILURE'
+            }
+          }
+        }
+      }
+    }
+
+    stage('Create Kubernetes Service') {
+      steps {
+        dir('node-app') {
+          script {
+            def serviceCmd = "sudo kubectl apply -f k8-service.yml"
+            def serviceStatus = sh(script: serviceCmd, returnStatus: true)
+
+            if (serviceStatus == 0) {
+              echo "Kubernetes service creation succeeded"
+              
+            } else {
+              echo "Kubernetes service creation failed"
+             
+            }
+          }
         }
       }
     }
