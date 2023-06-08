@@ -20,7 +20,7 @@ pipeline {
       steps {
         dir('node-app') {
         sh 'sudo docker run --name node-app -p 80:3000 -d node-app1:latest'
-        sh 'sudo docker run node-app'
+        sh 'sudo docker start node-app'
         }
       }
     }
