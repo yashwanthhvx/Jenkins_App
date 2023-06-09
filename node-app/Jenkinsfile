@@ -8,7 +8,14 @@ pipeline {
       }
     }
 
-    stage('Build Docker image') {
+    stages {
+    stage('Copy the code packages to destination path ') {
+      steps {
+        sh 'cp -R . /var/lib/jenkins/workspace/Jenkins_Node_Deployment_refactor/node-app/.'
+      }
+    }
+      
+      stage('Build Docker image') {
       steps {
         dir('node-app') {
           sh 'sudo docker build -t node-app:latest .'
