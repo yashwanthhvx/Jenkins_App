@@ -4,17 +4,16 @@ pipeline {
   stages {
     stage('Clone repository') {
       steps {
-        git branch: 'refactor', url: 'https://github.com/yashwanthhvx/Node_App.git'
+        git branch: 'refactor', url: 'https://github.com/yashwanthhvx/jenkins_repo.git'
       }
     }
-    
-    stages {
-      stage('Copy the code to the destination path')
-      steps {
-        sh 'scp -R . /var/lib/jenkins/workspace/Node_App_Deployment/node-app/.'
-      }
-    } 
 
+    stage('Copy the code packages to destination path') {
+      steps {
+        sh 'sudo cp -R /var/lib/jenkins/workspace/Code_Deployment_Project/* /var/lib/jenkins/workspace/Jenkins_Node_Deployment_test/node-app/.'
+      }
+    }
+      
     stage('Build Docker image') {
       steps {
         dir('node-app') {
@@ -69,10 +68,8 @@ pipeline {
 
             if (serviceStatus == 0) {
               echo "Kubernetes service creation succeeded"
-              
             } else {
               echo "Kubernetes service creation failed"
-             
             }
           }
         }
