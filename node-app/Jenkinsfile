@@ -2,6 +2,12 @@ pipeline {
   agent any
 
   stages {
+    stage('Clone repository') {
+      steps {
+        git branch: 'main', url: 'https://github.com/yashwanthhvx/Jenkins_App.git'
+      }
+    }
+    
      stage('Show branch name') {
       steps {
         script {
@@ -10,13 +16,7 @@ pipeline {
         }
       }
     }
-   
-    stage('Clone repository') {
-      steps {
-        git branch: 'main', url: 'https://github.com/yashwanthhvx/Jenkins_App.git'
-      }
-    }
-     
+    
     stage('Copy the code packages to destination path') {
       steps {
         sh 'sudo cp -R /var/lib/jenkins/workspace/Node_App/Node-App/* /var/lib/jenkins/workspace/Jenkins_App_main/node-app/.'
