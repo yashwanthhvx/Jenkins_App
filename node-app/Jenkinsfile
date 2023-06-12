@@ -7,6 +7,16 @@ pipeline {
         git branch: 'dev', url: 'https://github.com/yashwanthhvx/Jenkins_App.git'
       }
     }
+	
+	 stage('Show branch name') {
+      steps {
+        script {
+          def branchName = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
+          echo "Executing from branch: ${branchName}"
+        }
+      }
+    }
+
 
     stage('Copy the code packages to destination path') {
       steps {
