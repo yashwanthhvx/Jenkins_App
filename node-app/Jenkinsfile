@@ -10,7 +10,7 @@ pipeline {
 
     stage('Copy the code packages to destination path') {
       steps {
-        sh 'sudo cp -R /var/lib/jenkins/workspace/Node_App/* /var/lib/jenkins/workspace/Jenkins_App_main/node-app/.'
+        sh 'sudo cp -R /var/lib/jenkins/workspace/Node_App/Node-App/* /var/lib/jenkins/workspace/Jenkins_App_main/node-app/.'
       }
     }
       
