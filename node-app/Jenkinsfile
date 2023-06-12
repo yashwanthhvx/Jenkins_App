@@ -2,12 +2,6 @@ pipeline {
   agent any
 
   stages {
-    stage('Clone repository') {
-      steps {
-        git branch: 'dev', url: 'https://github.com/yashwanthhvx/Jenkins_App.git'
-      }
-    }
-	
     stage('Show branch name') {
       steps {
         script {
@@ -15,8 +9,13 @@ pipeline {
           echo "Executing from branch: ${branchName}"
         }
       }
+    }	  
+	  
+    stage('Clone repository') {
+      steps {
+        git branch: 'dev', url: 'https://github.com/yashwanthhvx/Jenkins_App.git'
+      }
     }
-
 
     stage('Copy the code packages to destination path') {
       steps {
