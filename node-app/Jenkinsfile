@@ -10,14 +10,14 @@ pipeline {
         }
       }
     }
-    
+
     stage('Clone repository') {
       steps {
         git branch: 'prod', url: 'https://github.com/yashwanthhvx/Jenkins_App.git'
       }
     }
-    
-     stage('Show branch name') {
+
+    stage('Show branch name') {
       steps {
         script {
           def branchName = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
@@ -25,13 +25,13 @@ pipeline {
         }
       }
     }
-    
+
     stage('Copy the code packages to destination path') {
       steps {
         sh 'sudo cp -R /var/lib/jenkins/workspace/Node_App/Node-App/* /var/lib/jenkins/workspace/Jenkins_App_prod/node-app/.'
       }
     }
-    
+
     stage('Build Docker image') {
       steps {
         dir('node-app') {
@@ -81,17 +81,3 @@ pipeline {
       steps {
         dir('node-app') {
           script {
-            def serviceCmd = "sudo kubectl apply -f k8-service.yml"
-            def serviceStatus = sh(script: serviceCmd, returnStatus: true)
-
-            if (serviceStatus == 0) {
-              echo "Kubernetes service creation succeeded"
-            } else {
-              echo "Kubernetes service creation failed"
-            }
-          }
-        }
-      }
-    }
-  }
-}
