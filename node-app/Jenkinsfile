@@ -2,6 +2,15 @@ pipeline {
   agent any
 
   stages {
+    stage('Show branch name') {
+      steps {
+        script {
+          def branchName = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
+          echo "Executing from branch: ${branchName}"
+        }
+      }
+    }
+    
     stage('Clone repository') {
       steps {
         git branch: 'prod', url: 'https://github.com/yashwanthhvx/Jenkins_App.git'
