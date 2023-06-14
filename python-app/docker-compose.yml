@@ -1,7 +1,7 @@
 version: '3'
 services:
   app:
-    image: yash2880/healthviewx-python
+    image: hvxuser/jenkins-python
     deploy:
       replicas: 3
     ports:
