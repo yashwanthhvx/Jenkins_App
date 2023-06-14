@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  node-app:
+    image: hvxuser/hello-world1
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.role == worker
+    ports:
+      - 80:3000
