@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: python-hello-world
-          image: hvxuser/pythonhvx1:latest
+          image: hvxuser/python-app-stage:latest
           ports:
             - containerPort: 5000
