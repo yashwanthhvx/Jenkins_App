@@ -47,8 +47,8 @@ pipeline {
       steps {
         dir('Node-App') {
           sh 'sudo bash docker-credentials.sh'
-          sh 'sudo docker tag node-app:latest hvxuser/jenkins'
-          sh 'sudo docker push hvxuser/jenkins'
+          sh 'sudo docker tag node-app:latest hvxuser/node-app1-main'
+          sh 'sudo docker push hvxuser/node-app1-main'
         }
       }
     }
