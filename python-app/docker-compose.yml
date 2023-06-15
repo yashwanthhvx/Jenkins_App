@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   node-app:
-    image: hvxuser/jenkins-python
+    image: hvxuser/python-app-test:latest
     deploy:
       replicas: 3
       restart_policy:
