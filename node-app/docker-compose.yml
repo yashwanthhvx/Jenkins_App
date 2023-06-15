@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   node-app:
-    image:  hvxuser/node-app1-main
+    image:  hvxuser/node-app-main
     deploy:
       replicas: 3
       restart_policy:
