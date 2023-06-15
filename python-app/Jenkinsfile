@@ -47,8 +47,8 @@ pipeline {
       steps {
         dir('Python-App') {
           sh 'sudo bash docker-credentials.sh'
-          sh 'sudo docker tag python-app:latest hvxuser/jenkins-python'
-          sh 'sudo docker push hvxuser/jenkins-python'
+          sh 'sudo docker tag python-app:latest hvxuser/python-app-main'
+          sh 'sudo docker push hvxuser/python-app-main'
         }
       }
     }
