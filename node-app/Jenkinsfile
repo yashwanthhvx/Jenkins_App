@@ -24,7 +24,8 @@ pipeline {
     
     stage('Copy the code packages to destination path') {
       steps {
-        sh 'sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_"${params.TARGET_BRANCH}"/node-app/* /var/lib/jenkins/workspace/Node_App_"${params.TARGET_BRANCH}"/Node-App/.'
+        sh "echo ${parama.TARGET_BRANCH}"
+        sh 'sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_${params.TARGET_BRANCH}/node-app/* /var/lib/jenkins/workspace/Node_App_${params.TARGET_BRANCH}/Node-App/.'
       }
     }
 
