@@ -3,7 +3,7 @@ pipeline {
 
   parameters {
     choice(name: 'DEPLOYMENT_TYPE', choices: ['Docker-Compose', 'Kubernetes'], description: 'Choose the deployment type')
-    string(name: 'TARGET_BRANCH', defaultValue: 'prod', description: 'Specify the target branch')
+    string(name: 'TARGET_BRANCH', defaultValue: 'test', description: 'Specify the target branch')
   }
 
   stages {
