@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: node-app
-          image: hvxuser/node-app-main:latest
+          image: hvxuser/node-app-${TARGET_BRANCH}:latest
           ports:
             - containerPort: 3000
