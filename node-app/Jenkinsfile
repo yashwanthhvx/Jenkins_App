@@ -50,7 +50,7 @@ pipeline {
         dir('Node-App') {
           sh 'sudo bash docker-credentials.sh'
           sh 'sudo docker tag node-app:latest hvxuser/node-app-"${params.TARGET_BRANCH}"'
-          sh 'sudo docker push hvxuser/node-app-"${params.TARGET_BRANCH}"'
+          sh "sudo docker push hvxuser/node-app-${params.TARGET_BRANCH}"
         }
       }
     }
