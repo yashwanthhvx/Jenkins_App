@@ -49,8 +49,8 @@ pipeline {
       steps {
         dir('Node-App') {
           sh 'sudo bash docker-credentials.sh'
-          sh "sudo docker tag node-app:latest hvxuser/node-app-${params.TARGET_BRANCH}"
-          sh "sudo docker push hvxuser/node-app-${params.TARGET_BRANCH}"
+          sh 'sudo docker tag node-app:latest hvxuser/node-app-"${params.TARGET_BRANCH}"'
+          sh 'sudo docker push hvxuser/node-app-"${params.TARGET_BRANCH}"'
         }
       }
     }
@@ -67,26 +67,27 @@ pipeline {
     }
 
     stage('Create Kubernetes Deployment') {
-  when {
-    expression { params.DEPLOYMENT_TYPE == 'Kubernetes' }
-  }
-  steps {
-    dir('Node-App') {
-      script {
-        def deployCmd = "sudo kubectl apply -f k8-deployment.yml --set TARGET_BRANCH=${params.TARGET_BRANCH}"
-        def deployStatus = sh(script: deployCmd, returnStatus: true)
+      when {
+        expression { params.DEPLOYMENT_TYPE == 'Kubernetes' }
+      }
+      steps {
+        dir('Node-App') {
+          script {
+            def deployCmd = "sudo kubectl apply -f k8-deployment.yml"
+            def deployStatus = sh(script: deployCmd, returnStatus: true)
 
-        if (deployStatus == 0) {
-          echo "Kubernetes deployment succeeded"
-          currentBuild.result = 'SUCCESS'
-        } else {
-          echo "Kubernetes deployment failed"
-          currentBuild.result = 'FAILURE'
+            if (deployStatus == 0) {
+              echo "Kubernetes deployment succeeded"
+              currentBuild.result = 'SUCCESS'
+            } else {
+              echo "Kubernetes deployment failed"
+              currentBuild.result = 'FAILURE'
+            }
+          }
         }
       }
     }
-  }
-}
+
     stage('Create Kubernetes Service') {
       when {
         expression { params.DEPLOYMENT_TYPE == 'Kubernetes' }
