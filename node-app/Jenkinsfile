@@ -4,7 +4,6 @@ pipeline {
   parameters {
     choice(name: 'DEPLOYMENT_TYPE', choices: ['Docker-Compose', 'Kubernetes'], description: 'Choose the deployment type')
     string(name: 'TARGET_BRANCH', defaultValue: 'main', description: 'Specify the target branch')
-    string(name: 'CURRENT_BRANCH', defaultValue: 'main', description: 'Specify Current branch')
   }
 
   stages {
@@ -26,7 +25,7 @@ pipeline {
     stage('Copy the code packages to destination path') {
       steps {
         sh "echo ${params.TARGET_BRANCH}"
-        sh "sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_${params.TARGET_BRANCH}/node-app/* /var/lib/jenkins/workspace/Node_App_${params.CURRENT_BRANCH}/Node-App/."
+        sh "sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_${params.TARGET_BRANCH}/node-app/* /var/lib/jenkins/workspace/Node_App_${params.TARGET_BRANCH}/Node-App/."
       }
     }
 
@@ -74,11 +73,9 @@ pipeline {
       steps {
         dir('Node-App') {
           script {
-            sh "sed -i 's|image: hvxuser/node-app-main:latest|image: hvxuser/node-app-${params.TARGET_BRANCH}:latest|' k8-deployment.yml"
-            sh "cat k8-deployment.yml && grep -i image"
-            sh "kubectl apply -f k8-deployment.yml"
+            def deployCmd = "sudo kubectl apply -f k8-deployment.yml"
             def deployStatus = sh(script: deployCmd, returnStatus: true)
-            
+
             if (deployStatus == 0) {
               echo "Kubernetes deployment succeeded"
               currentBuild.result = 'SUCCESS'
