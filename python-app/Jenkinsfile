@@ -62,7 +62,7 @@ pipeline {
       }
       steps {
         dir('Python-App') {
-          sh 'sudo docker stack deploy -c docker-compose.yml my-python-app-prod'
+          sh 'sudo docker stack deploy -c docker-compose.yml my-python-app'
         }
       }
     }
