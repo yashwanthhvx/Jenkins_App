@@ -3,12 +3,14 @@ pipeline {
 
   parameters {
     choice(name: 'DEPLOYMENT_TYPE', choices: ['Docker-Compose', 'Kubernetes'], description: 'Choose the deployment type')
+    string(name: 'TARGET_BRANCH', defaultValue: 'test', description: 'Specify the target branch')
+    string(name: 'CURRENT_BRANCH', defaultValue: 'test', description: 'Specify the current branch')
   }
 
   stages {
     stage('Clone repository') {
       steps {
-        git branch: 'test', url: 'https://github.com/yashwanthhvx/Python_App.git'
+        git branch: "${params.TARGET_BRANCH}", url: 'https://github.com/yashwanthhvx/Python_App.git'
       }
     }
 
@@ -23,7 +25,8 @@ pipeline {
     
     stage('Copy the code packages to destination path') {
       steps {
-        sh 'sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_test/python-app/* /var/lib/jenkins/workspace/Python_App_test/Python-App/.'
+        sh "echo ${params.TARGET_BRANCH}"
+        sh "sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_${params.TARGET_BRANCH}/python-app/* /var/lib/jenkins/workspace/Python_App_${params.CURRENT_BRANCH}/Python-App/."
       }
     }
 
@@ -38,7 +41,7 @@ pipeline {
     stage('Run Docker container') {
       steps {
         dir('Python-App') {
-          sh 'sudo docker run -p 8000:5000 -d python-app:latest'
+          sh 'sudo docker run -p 80:3000 -d python-app:latest'
         }
       }
     }
@@ -47,8 +50,8 @@ pipeline {
       steps {
         dir('Python-App') {
           sh 'sudo bash docker-credentials.sh'
-          sh 'sudo docker tag python-app:latest hvxuser/python-app-test'
-          sh 'sudo docker push hvxuser/python-app-test'
+          sh "sudo docker tag python-app:latest hvxuser/python-app-${params.TARGET_BRANCH}"
+          sh "sudo docker push hvxuser/python-app-${params.TARGET_BRANCH}"
         }
       }
     }
@@ -59,7 +62,7 @@ pipeline {
       }
       steps {
         dir('Python-App') {
-          sh 'sudo docker stack deploy -c docker-compose.yml my-python-app'
+          sh 'sudo docker stack deploy -c docker-compose.yml my-python-app-test'
         }
       }
     }
