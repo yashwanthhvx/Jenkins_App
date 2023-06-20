@@ -9,7 +9,7 @@ pipeline {
   stages {
     stage('Clone repository') {
       steps {
-        git branch: "${params.TARGET_BRANCH}", url: 'https://github.com/yashwanthhvx/Node_App.git'
+         git branch: "${params.TARGET_BRANCH ?: '*/' + env.BRANCH_NAME}", url: 'https://github.com/yashwanthhvx/Node_App.git'
       }
     }
 
