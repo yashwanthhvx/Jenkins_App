@@ -76,16 +76,16 @@ pipeline {
           script {
             sh "sed -i 's|image: hvxuser/node-app-main:latest|image: hvxuser/node-app-${params.TARGET_BRANCH}:latest|' k8-deployment.yml"
             sh "cat k8-deployment.yml && grep -i image"
-            def deployCmd = "kubectl apply -f k8-deployment.yml"
-            def deployStatus = sh(script: deployCmd, returnStatus: true)
+            sh "kubectl apply -f k8-deployment.yml"
+            // def deployStatus = sh(script: deployCmd, returnStatus: true)
             
-            if (deployStatus == 0) {
-              echo "Kubernetes deployment succeeded"
-              currentBuild.result = 'SUCCESS'
-            } else {
-              echo "Kubernetes deployment failed"
-              currentBuild.result = 'FAILURE'
-            }
+            // if (deployStatus == 0) {
+            //   echo "Kubernetes deployment succeeded"
+            //   currentBuild.result = 'SUCCESS'
+            // } else {
+            //   echo "Kubernetes deployment failed"
+            //   currentBuild.result = 'FAILURE'
+            // }
           }
         }
       }
