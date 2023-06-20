@@ -74,6 +74,8 @@ pipeline {
       steps {
         dir('Node-App') {
           script {
+            sh "sed -i 's|image: hvxuser/node-app-main:latest|image: hvxuser/node-app-${params.TARGET_BRANCH}:latest|' k8-deployment.yml"
+            sh "cat k8-deployment.yml && grep -i image"
             def deployCmd = "sudo kubectl apply -f k8-deployment.yml"
             def deployStatus = sh(script: deployCmd, returnStatus: true)
 
@@ -96,8 +98,6 @@ pipeline {
       steps {
         dir('Node-App') {
           script {
-            sh "sed -i 's|image: hvxuser/node-app-main:latest|image: hvxuser/node-app-${params.TARGET_BRANCH}:latest|' k8-deployment.yml"
-            sh "cat k8-deployment.yml && grep -i image"
             def serviceCmd = "sudo kubectl apply -f k8-service.yml"
             def serviceStatus = sh(script: serviceCmd, returnStatus: true)
 
