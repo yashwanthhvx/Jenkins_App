@@ -31,89 +31,80 @@ pipeline {
         sh "sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_main/node-app/* /var/lib/jenkins/workspace/Node_App_${params.TARGET_BRANCH}/Node-App/."
       }
     }
+  } // <-- Add closing curly brace for stages
 
-stages {
-    stage('Deploy') {
-      parallel {
-        stage('Build Docker image') {
-          steps {
-            dir('Node-App') {
-              sh 'sudo docker build -t node-app:latest .'
-            }
+  stage('Deploy') {
+    parallel {
+      stage('Build Docker image') {
+        steps {
+          dir('Node-App') {
+            sh 'sudo docker build -t node-app:latest .'
           }
         }
+      }
 
-        stage('Run Docker container') {
-          steps {
-            dir('Node-App') {
-              sh 'sudo docker run -p 80:3000 -d node-app:latest'
-            }
+      stage('Run Docker container') {
+        steps {
+          dir('Node-App') {
+            sh 'sudo docker run -p 80:3000 -d node-app:latest'
           }
         }
+      }
 
-        stage('Docker Hub Push') {
-          steps {
-            dir('Node-App') {
-              sh 'sudo bash docker-credentials.sh'
-              sh 'sudo docker tag node-app:latest hvxuser/node-app-main'
-              sh 'sudo docker push hvxuser/node-app-main'
-            }
+      stage('Docker Hub Push') {
+        steps {
+          dir('Node-App') {
+            sh 'sudo bash docker-credentials.sh'
+            sh 'sudo docker tag node-app:latest hvxuser/node-app-main'
+            sh 'sudo docker push hvxuser/node-app-main'
           }
         }
+      }
 
-        stage('Create Docker-compose') {
-          when {
-            expression { params.DEPLOYMENT_TYPE == 'Docker-Compose' }
-          }
-          steps {
-            dir('Node-App') {
-              sh 'sudo docker stack deploy -c docker-compose.yml my-node-app-main'
-            }
+      stage('Create Docker-compose') {
+        when {
+          expression { params.DEPLOYMENT_TYPE == 'Docker-Compose' }
+        }
+        steps {
+          dir('Node-App') {
+            sh 'sudo docker stack deploy -c docker-compose.yml my-node-app-main'
           }
         }
+      }
 
-        stage('Create Kubernetes Deployment') {
-          when {
-            expression { params.DEPLOYMENT_TYPE == 'Kubernetes' }
-          }
-          steps {
-            dir('Node-App') {
-              script {
-                def deployCmd = 'sudo kubectl apply -f k8-deployment.yml'
-                def deployStatus = sh(script: deployCmd, returnStatus: true)
-
-                if (deployStatus == 0) {
-                  echo 'Kubernetes deployment succeeded'
-                  currentBuild.result = 'SUCCESS'
-                } else {
-                  echo 'Kubernetes deployment failed'
-                  currentBuild.result = 'FAILURE'
-                }
-              }
-            }
-          }
+      stage('Create Kubernetes Deployment') {
+        when {
+          expression { params.DEPLOYMENT_TYPE == 'Kubernetes' }
         }
+        steps {
+          dir('Node-App') {
+            script {
+              def deployCmd = 'sudo kubectl apply -f k8-deployment.yml'
+              def deployStatus = sh(script: deployCmd, returnStatus: true)
 
-        stage('Create Kubernetes Service') {
-          when {
-            expression { params.DEPLOYMENT_TYPE == 'Kubernetes' }
-          }
-          steps {
-            dir('Node-App') {
-              script {
-                def serviceCmd = 'sudo kubectl apply -f k8-service.yml'
-                def serviceStatus = sh(script: serviceCmd, returnStatus: true)
-
-                if (serviceStatus == 0) {
-                  echo 'Kubernetes service creation succeeded'
-                } else {
-                  echo 'Kubernetes service creation failed'
-                }
+              if (deployStatus == 0) {
+                echo 'Kubernetes deployment succeeded'
+                currentBuild.result = 'SUCCESS'
+              } else {
+                echo 'Kubernetes deployment failed'
+                currentBuild.result = 'FAILURE'
               }
             }
           }
         }
       }
-    }
-  }
-}
+
+      stage('Create Kubernetes Service') {
+        when {
+          expression { params.DEPLOYMENT_TYPE == 'Kubernetes' }
+        }
+        steps {
+          dir('Node-App') {
+            script {
+              def serviceCmd = 'sudo kubectl apply -f k8-service.yml'
+              def serviceStatus = sh(script: serviceCmd, returnStatus: true)
+
+              if (serviceStatus == 0) {
+                echo 'Kubernetes service creation succeeded'
+              } else {
+                echo 'Kubernetes service creation failed
