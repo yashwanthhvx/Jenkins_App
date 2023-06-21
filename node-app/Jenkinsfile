@@ -3,14 +3,13 @@ ipeline {
 
   parameters {
     choice(name: 'DEPLOYMENT_TYPE', choices: ['Docker-Compose', 'Kubernetes'], description: 'Choose the deployment type')
-    string(name: 'TARGET_BRANCH', defaultValue: 'stage', description: 'Specify the target branch')
-    string(name: 'CURRENT_BRANCH', defaultValue: 'stage', description: 'Specify the current branch')
+    string(name: 'TARGET_BRANCH', defaultValue: 'stage', description: 'Specify the current branch')
   }
 
   stages {
     stage('Clone repository') {
       steps {
-        git branch: "${params.TARGET_BRANCH}", url: 'https://github.com/yashwanthhvx/Node_App.git'
+        git branch: "stage", url: 'https://github.com/yashwanthhvx/Node_App.git'
       }
     }
 
@@ -25,7 +24,7 @@ ipeline {
     
     stage('Copy the code packages to destination path') {
       steps {
-        sh "sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_${params.TARGET_BRANCH}/node-app/* /var/lib/jenkins/workspace/Node_App_${params.CURRENT_BRANCH}/Node-App/."
+        sh "sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_stage/node-app/* /var/lib/jenkins/workspace/Node_App_${params.TARGET_BRANCH}/Node-App/."
       }
     }
 
@@ -49,8 +48,8 @@ ipeline {
       steps {
         dir('Node-App') {
           sh 'sudo bash docker-credentials.sh'
-          sh "sudo docker tag node-app:latest hvxuser/node-app-${params.TARGET_BRANCH}"
-          sh "sudo docker push hvxuser/node-app-${params.TARGET_BRANCH}"
+          sh "sudo docker tag node-app:latest hvxuser/node-app-stage"
+          sh "sudo docker push hvxuser/node-app-stage"
         }
       }
     }
