@@ -107,4 +107,12 @@ pipeline {
               if (serviceStatus == 0) {
                 echo 'Kubernetes service creation succeeded'
               } else {
-                echo 'Kubernetes service creation failed
+                echo "Kubernetes service creation failed"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
