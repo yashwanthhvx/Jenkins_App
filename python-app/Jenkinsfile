@@ -4,13 +4,12 @@ pipeline {
   parameters {
     choice(name: 'DEPLOYMENT_TYPE', choices: ['Docker-Compose', 'Kubernetes'], description: 'Choose the deployment type')
     string(name: 'TARGET_BRANCH', defaultValue: 'stage', description: 'Specify the target branch')
-    string(name: 'CURRENT_BRANCH', defaultValue: 'stage', description: 'Specify the current branch')
   }
 
   stages {
     stage('Clone repository') {
       steps {
-        git branch: "${params.TARGET_BRANCH}", url: 'https://github.com/yashwanthhvx/Python_App.git'
+        git branch: "stage", url: 'https://github.com/yashwanthhvx/Python_App.git'
       }
     }
 
@@ -25,8 +24,8 @@ pipeline {
     
     stage('Copy the code packages to destination path') {
       steps {
-        sh "echo ${params.TARGET_BRANCH}"
-        sh "sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_${params.TARGET_BRANCH}/python-app/* /var/lib/jenkins/workspace/Python_App_${params.CURRENT_BRANCH}/Python-App/."
+        sh "echo stage"
+        sh "sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_stage/python-app/* /var/lib/jenkins/workspace/Python_App_${params.TARGET_BRANCH}/Python-App/."
       }
     }
 
@@ -50,8 +49,8 @@ pipeline {
       steps {
         dir('Python-App') {
           sh 'sudo bash docker-credentials.sh'
-          sh "sudo docker tag python-app:latest hvxuser/python-app-${params.TARGET_BRANCH}"
-          sh "sudo docker push hvxuser/python-app-${params.TARGET_BRANCH}"
+          sh "sudo docker tag python-app:latest hvxuser/python-app-stage"
+          sh "sudo docker push hvxuser/python-app-stage"
         }
       }
     }
@@ -79,10 +78,10 @@ pipeline {
 
             if (deployStatus == 0) {
               echo "Kubernetes deployment succeeded"
-              currentBuild.result = 'SUCCESS'
+              targetBuild.result = 'SUCCESS'
             } else {
               echo "Kubernetes deployment failed"
-              currentBuild.result = 'FAILURE'
+              targetBuild.result = 'FAILURE'
             }
           }
         }
