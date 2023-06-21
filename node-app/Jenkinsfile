@@ -3,7 +3,7 @@ pipeline {
 
   parameters {
     choice(name: 'DEPLOYMENT_TYPE', choices: ['Docker-Compose', 'Kubernetes'], description: 'Choose the deployment type')
-    string(name: 'TARGET_BRANCH', defaultValue: 'test', description: 'Specify the current branch')
+    string(name: 'TARGET_BRANCH', defaultValue: 'test', description: 'Specify the target branch')
   }
 
   stages {
@@ -77,10 +77,10 @@ pipeline {
 
             if (deployStatus == 0) {
               echo "Kubernetes deployment succeeded"
-              currentBuild.result = 'SUCCESS'
+              target Build.result = 'SUCCESS'
             } else {
               echo "Kubernetes deployment failed"
-              currentBuild.result = 'FAILURE'
+              target Build.result = 'FAILURE'
             }
           }
         }
