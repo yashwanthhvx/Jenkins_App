@@ -25,89 +25,72 @@ pipeline {
         }
       }
     }
-    
+
     stage('Prepare') {
       steps {
         sh "sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_main/node-app/* /var/lib/jenkins/workspace/Node_App_${params.TARGET_BRANCH}/Node-App/."
       }
     }
-  } // <-- Add closing curly brace for stages
 
-  stage('Deploy') {
-  parallel {
-    stage('Build Docker image') {
-      steps {
-        dir('Node-App') {
-          sh 'sudo docker build -t node-app:latest .'
-        }
-      }
-    }
-
-    stage('Run Docker container') {
-      steps {
-        dir('Node-App') {
-          sh 'sudo docker run -p 80:3000 -d node-app:latest'
-        }
-      }
-    }
-
-    stage('Docker Hub Push') {
-      steps {
-        dir('Node-App') {
-          sh 'sudo bash docker-credentials.sh'
-          sh 'sudo docker tag node-app:latest hvxuser/node-app-main'
-          sh 'sudo docker push hvxuser/node-app-main'
-        }
-      }
-    }
-
-    stage('Create Docker-compose') {
-      when {
-        expression { params.DEPLOYMENT_TYPE == 'Docker-Compose' }
-      }
-      steps {
-        dir('Node-App') {
-          sh 'sudo docker stack deploy -c docker-compose.yml my-node-app-main'
-        }
-      }
-    }
-
-    stage('Create Kubernetes Deployment') {
-      when {
-        expression { params.DEPLOYMENT_TYPE == 'Kubernetes' }
-      }
-      steps {
-        dir('Node-App') {
-          script {
-            def deployCmd = 'sudo kubectl apply -f k8-deployment.yml'
-            def deployStatus = sh(script: deployCmd, returnStatus: true)
-
-            if (deployStatus == 0) {
-              echo 'Kubernetes deployment succeeded'
-              currentBuild.result = 'SUCCESS'
-            } else {
-              echo 'Kubernetes deployment failed'
-              currentBuild.result = 'FAILURE'
+    stage('Deploy') {
+      parallel {
+        stage('Build Image') {
+          steps {
+            dir('Node-App') {
+              sh 'sudo docker build -t node-app:latest .'
+              sh 'sudo docker run -p 80:3000 -d node-app:latest'
             }
           }
         }
-      }
-    }
 
-    stage('Create Kubernetes Service') {
-      when {
-        expression { params.DEPLOYMENT_TYPE == 'Kubernetes' }
-      }
-      steps {
-        dir('Node-App') {
-          script {
-            def serviceCmd = 'sudo kubectl apply -f k8-service.yml'
-            def serviceStatus = sh(script: serviceCmd, returnStatus: true)
+        stage('Docker Push') {
+          steps {
+            dir('Node-App') {
+              sh 'sudo bash docker-credentials.sh'
+              sh 'sudo docker tag node-app:latest hvxuser/node-app-main'
+              sh 'sudo docker push hvxuser/node-app-main'
+            }
+          }
+        }
 
-            if (serviceStatus == 0) {
-              echo 'Kubernetes service creation succeeded'
-            } else {
-              echo "Kubernetes service creation failed"
+        stage('Docker-Compose') {
+          when {
+            expression { params.DEPLOYMENT_TYPE == 'Docker-Compose' }
+          }
+          steps {
+            dir('Node-App') {
+              sh 'sudo docker stack deploy -c docker-compose.yml my-node-app-main'
+            }
+          }
+        }
+
+        stage('K8-Deploy') {
+          when {
+            expression { params.DEPLOYMENT_TYPE == 'Kubernetes' }
+          }
+          steps {
+            dir('Node-App') {
+              script {
+                def deployCmd = 'sudo kubectl apply -f k8-deployment.yml'
+                def deployStatus = sh(script: deployCmd, returnStatus: true)
+
+                if (deployStatus == 0) {
+                  echo 'Kubernetes deployment succeeded'
+                  def serviceCmd = 'sudo kubectl apply -f k8-service.yml'
+                  def serviceStatus = sh(script: serviceCmd, returnStatus: true)
+
+                  if (serviceStatus == 0) {
+                    echo 'Kubernetes service creation succeeded'
+                    currentBuild.result = 'SUCCESS'
+                  } else {
+                    echo 'Kubernetes service creation failed'
+                    currentBuild.result = 'FAILURE'
+                  }
+                } else {
+                  echo 'Kubernetes deployment failed'
+                  currentBuild.result = 'FAILURE'
+                }
+              }
             }
           }
         }
