@@ -17,10 +17,7 @@ pipeline {
 
         stage('sourcecode') {
           steps {
-            script {
-              def branchName = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
-              echo "Executing from branch: ${branchName}"
-            }
+            echo "Executing from branch: ${env.BRANCH_NAME}"
           }
         }
       }
