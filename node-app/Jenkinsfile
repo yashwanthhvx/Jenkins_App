@@ -35,7 +35,7 @@ pipeline {
           steps {
             dir('Node-App') {
               sh 'sudo docker build -t node-app-main:latest .'
-              sh 'sudo docker run -p 80:3000 -d node-app-main:latest'
+              sh 'sudo docker run -d -p 80:3000 --name node-app-main node-app-main:latest'
             }
           }
         }
@@ -73,16 +73,6 @@ pipeline {
 
                 if (deployStatus == 0) {
                   echo 'Kubernetes deployment succeeded'
-                  def serviceCmd = 'sudo kubectl apply -f k8-service.yml'
-                  def serviceStatus = sh(script: serviceCmd, returnStatus: true)
-
-                  if (serviceStatus == 0) {
-                    echo 'Kubernetes service creation succeeded'
-                    currentBuild.result = 'SUCCESS'
-                  } else {
-                    echo 'Kubernetes service creation failed'
-                    currentBuild.result = 'FAILURE'
-                  }
                 } else {
                   echo 'Kubernetes deployment failed'
                   currentBuild.result = 'FAILURE'
