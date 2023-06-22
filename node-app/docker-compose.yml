@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  app1:
+    image: hvxuser/node-app-main:latest
+    container_name: node-app1
+    ports:
+      - 80:3000
+    networks:
+      - app-network
+    restart: always
+
+  app2:
+    image: hvxuser/node-app-main:latest
+    container_name: node-app2
+    networks:
+      - app-network
+    restart: always
+
+  app3:
+    image: hvxuser/node-app-main:latest
+    container_name: node-app3
+    networks:
+      - app-network
+    restart: always
+
+networks:
+  app-network:
