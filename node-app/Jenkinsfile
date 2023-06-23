@@ -9,12 +9,14 @@ pipeline {
   stages {
     stage('Build') {
       parallel {
-        stage('sourcecode ') {
+        stage('sourcecode') {
           steps {
             git branch: "main", url: 'https://github.com/yashwanthhvx/Node_App.git'
             echo "Executing from branch: ${env.BRANCH_NAME}"
           }
         }
+      }
+    }
 
     stage('Prepare') {
       steps {
