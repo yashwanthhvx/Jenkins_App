@@ -9,20 +9,15 @@ pipeline {
   stages {
     stage('Build') {
       parallel {
-        stage('Jenkins') {
-          steps {
-            git branch: "dev", url: 'https://github.com/yashwanthhvx/Node_App.git'
-          }
-        }
-
         stage('sourcecode') {
           steps {
+            git branch: "dev", url: 'https://github.com/yashwanthhvx/Node_App.git'
             echo "Executing from branch: ${env.BRANCH_NAME}"
           }
         }
       }
     }
-
+    
     stage('Prepare') {
       steps {
         sh "sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_dev/node-app/* /var/lib/jenkins/workspace/Node_App_${params.TARGET_BRANCH}/Node-App/."
