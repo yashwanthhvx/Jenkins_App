@@ -9,14 +9,9 @@ pipeline {
   stages {
     stage('Build') {
       parallel {
-        stage('Jenkins') {
-          steps {
-            git branch: "test", url: 'https://github.com/yashwanthhvx/Node_App.git'
-          }
-        }
-
         stage('sourcecode') {
           steps {
+            git branch: "test", url: 'https://github.com/yashwanthhvx/Node_App.git'
             echo "Executing from branch: ${env.BRANCH_NAME}"
           }
         }
