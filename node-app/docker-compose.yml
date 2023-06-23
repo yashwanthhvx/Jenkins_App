@@ -2,17 +2,17 @@ version: '3'
 services:
   node-app-dev1:
     container_name: node-app-dev1
-    image: hvxuser/node-app-dev
+    image: hvxuser/node-app-dev:latest
     restart: always
 
   node-app-dev2:
     container_name: node-app-dev2
-    image: hvxuser/node-app-dev
+    image: hvxuser/node-app-dev:latest
     restart: always
 
   node-app-dev3:
     container_name: node-app-dev3
-    image: hvxuser/node-app-dev
+    image: hvxuser/node-app-dev:latest
     restart: always
 
   nginx:
