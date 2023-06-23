@@ -29,7 +29,7 @@ pipeline {
         stage('Build Image') {
           steps {
             dir('Node-App') {
-              sh 'sudo docker build -t node-app-test:latest .'
+              sh 'sudo docker build -t node-app-test .'
               /* sh 'sudo docker run -d -p 80:3000 --name node-app-test node-app-main:test' */
             }
           }
@@ -39,7 +39,7 @@ pipeline {
           steps {
             dir('Node-App') {
               sh 'sudo bash docker-credentials.sh'
-              sh 'sudo docker tag node-app-test:latest hvxuser/node-app-test'
+              sh 'sudo docker tag node-app-test hvxuser/node-app-test'
               sh 'sudo docker push hvxuser/node-app-test'
             }
           }
