@@ -1,28 +1,29 @@
 version: '3'
-
 services:
-  app1:
-    image: hvxuser/node-app-main:latest
-    container_name: node-app1
+  node-app-main1:
+    container_name: node-app-main1
+    image: hvxuser/node-app-main
+    restart: always
+
+  node-app-main2:
+    container_name: node-app-main2
+    image: hvxuser/node-app-main
+    restart: always
+
+  node-app-main3:
+    container_name: node-app-main3
+    image: hvxuser/node-app-main
+    restart: always
+
+  nginx:
+    container_name: nginx
+    image: nginx:latest
     ports:
-      - 80:3000
-    networks:
-      - app-network
-    restart: always
-
-  app2:
-    image: hvxuser/node-app-main:latest
-    container_name: node-app2
-    networks:
-      - app-network
-    restart: always
-
-  app3:
-    image: hvxuser/node-app-main:latest
-    container_name: node-app3
-    networks:
-      - app-network
-    restart: always
-
-networks:
-  app-network:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./log/nginx:/var/log/nginx
+    depends_on:
+      - node-app-main1
+      - node-app-main2
+      - node-app-main3
