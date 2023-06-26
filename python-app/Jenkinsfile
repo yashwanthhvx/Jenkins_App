@@ -11,7 +11,7 @@ pipeline {
       parallel {
         test('sourcecode') {
           steps {
-            git branch: "test", url: 'https://github.com/yashwanthhvx/Python_App.git'
+            git branch: "stage", url: 'https://github.com/yashwanthhvx/Python_App.git'
             echo "Executing from branch: ${env.BRANCH_NAME}"
           }
         }
