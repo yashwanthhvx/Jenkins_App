@@ -7,101 +7,72 @@ pipeline {
   }
 
   stages {
-    stage('Clone repository') {
-      steps {
-        git branch: "stage", url: 'https://github.com/yashwanthhvx/Python_App.git'
-      }
-    }
-
-    stage('Show branch name') {
-      steps {
-        script {
-          def branchName = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
-          echo "Executing from branch: ${branchName}"
-        }
-      }
-    }
-    
-    stage('Copy the code packages to destination path') {
-      steps {
-        sh "echo stage"
-        sh "sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_stage/python-app/* /var/lib/jenkins/workspace/Python_App_${params.TARGET_BRANCH}/Python-App/."
-      }
-    }
-
-    stage('Build Docker image') {
-      steps {
-        dir('Python-App') {
-          sh 'sudo docker build -t python-app:latest .'
-        }
-      }
-    }
-
-    stage('Run Docker container') {
-      steps {
-        dir('Python-App') {
-          sh 'sudo docker run -p 80:3000 -d python-app:latest'
-        }
-      }
-    }
-
-    stage('Execute the Bash Script to docker login and save image') {
-      steps {
-        dir('Python-App') {
-          sh 'sudo bash docker-credentials.sh'
-          sh "sudo docker tag python-app:latest hvxuser/python-app-stage"
-          sh "sudo docker push hvxuser/python-app-stage"
-        }
-      }
-    }
-
-    stage('Create Docker-compose') {
-      when {
-        expression { params.DEPLOYMENT_TYPE == 'Docker-Compose' }
-      }
-      steps {
-        dir('Python-App') {
-          sh 'sudo docker stack deploy -c docker-compose.yml my-python-app'
-        }
-      }
-    }
-
-    stage('Create Kubernetes Deployment') {
-      when {
-        expression { params.DEPLOYMENT_TYPE == 'Kubernetes' }
-      }
-      steps {
-        dir('Python-App') {
-          script {
-            def deployCmd = "sudo kubectl apply -f k8-deployment.yml"
-            def deployStatus = sh(script: deployCmd, returnStatus: true)
-
-            if (deployStatus == 0) {
-              echo "Kubernetes deployment succeeded"
-              targetBuild.result = 'SUCCESS'
-            } else {
-              echo "Kubernetes deployment failed"
-              targetBuild.result = 'FAILURE'
-            }
+    stage('Build') {
+      parallel {
+        stage('sourcecode') {
+          steps {
+            git branch: "test", url: 'https://github.com/yashwanthhvx/Python_App.git'
+            echo "Executing from branch: ${env.BRANCH_NAME}"
           }
         }
       }
     }
 
-    stage('Create Kubernetes Service') {
-      when {
-        expression { params.DEPLOYMENT_TYPE == 'Kubernetes' }
-      }
+    stage('Prepare') {
       steps {
-        dir('Python-App') {
-          script {
-            def serviceCmd = "sudo kubectl apply -f k8-service.yml"
-            def serviceStatus = sh(script: serviceCmd, returnStatus: true)
+        sh "sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_stage/python-app/* /var/lib/jenkins/workspace/Python_App_${params.TARGET_BRANCH}/Python-App/."
+      }
+    }
 
-            if (serviceStatus == 0) {
-              echo "Kubernetes service creation succeeded"
-            } else {
-              echo "Kubernetes service creation failed"
+    stage('Deploy') {
+      parallel {
+        stage('Build Image') {
+          steps {
+            dir('Python-App') {
+              sh 'sudo docker build -t python-app-stage .'
+              /* sh 'sudo docker run -d -p 80:3000 --name python-app-stage python-app-stage' */
+            }
+          }
+        }
+
+        stage('Docker Push') {
+          steps {
+            dir('Python-App') {
+              sh 'sudo bash docker-credentials.sh'
+              sh 'sudo docker tag python-app-stage hvxuser/python-app-stage'
+              sh 'sudo docker push hvxuser/python-app-stage'
+            }
+          }
+        }
+
+        stage('Docker-Compose') {
+          when {
+            expression { params.DEPLOYMENT_TYPE == 'Docker-Compose' }
+          }
+          steps {
+            dir('Python-App') {
+              sh 'sudo docker-compose up -d'
+            }
+          }
+        }
+
+        stage('K8-Deploy') {
+          when {
+            expression { params.DEPLOYMENT_TYPE == 'Kubernetes' }
+          }
+          steps {
+            dir('Python-App') {
+              script {
+                def deployCmd = 'sudo kubectl apply -f k8-deployment.yml'
+                def deployStatus = sh(script: deployCmd, returnStatus: true)
+
+                if (deployStatus == 0) {
+                  echo 'Kubernetes deployment succeeded'
+                } else {
+                  echo 'Kubernetes deployment failed'
+                  currentBuild.result = 'FAILURE'
+                }
+              }
             }
           }
         }
