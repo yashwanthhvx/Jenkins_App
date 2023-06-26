@@ -30,7 +30,7 @@
           steps {
             dir('Python-App') {
               sh 'sudo docker build -t python-app-prod .'
-              /* sh 'sudo docker run -d -p 80:3000 --name python-app-prod python-app-prod' */
+              /* sh 'sudo docker run -d -p 8000:5000 --name python-app-prod python-app-prod' */
             }
           }
         }
