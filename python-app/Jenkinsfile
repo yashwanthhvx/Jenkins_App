@@ -32,7 +32,7 @@ pipeline {
     stage('Build Docker image') {
       steps {
         dir('Python-App') {
-          sh 'sudo docker build -t python-app:latest .'
+          sh 'sudo docker build -t python-app-main .'
         }
       }
     }
@@ -40,7 +40,7 @@ pipeline {
     stage('Run Docker container') {
       steps {
         dir('Python-App') {
-          sh 'sudo docker run -p 80:3000 -d python-app:latest'
+          sh 'sudo docker run -p 80:3000 -d python-app-main'
         }
       }
     }
@@ -49,23 +49,23 @@ pipeline {
       steps {
         dir('Python-App') {
           sh 'sudo bash docker-credentials.sh'
-          sh "sudo docker tag python-app:latest hvxuser/python-app-main"
+          sh "sudo docker tag python-app-main hvxuser/python-app-main"
           sh "sudo docker push hvxuser/python-app-main"
         }
       }
     }
 
-    stage('Create Docker-compose') {
-      when {
-        expression { params.DEPLOYMENT_TYPE == 'Docker-Compose' }
-      }
-      steps {
-        dir('Python-App') {
-          sh 'sudo docker stack deploy -c docker-compose.yml my-python-app'
+    stage('Docker-Compose') {
+          when {
+            expression { params.DEPLOYMENT_TYPE == 'Docker-Compose' }
+          }
+          steps {
+            dir('Node-App') {
+              sh 'sudo docker-compose up -d'
+            }
+          }
         }
-      }
-    }
-
+    
     stage('Create Kubernetes Deployment') {
       when {
         expression { params.DEPLOYMENT_TYPE == 'Kubernetes' }
