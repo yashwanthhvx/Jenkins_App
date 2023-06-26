@@ -8,9 +8,9 @@ http {
   sendfile on;
 
   upstream backend {     
-    server python-app-dev1:3000;
-    server python-app-dev2:3000;
-    server python-app-dev3:3000;
+    server python-app-dev1:5000;
+    server python-app-dev2:5000;
+    server python-app-dev3:5000;
   }
 
   server {
