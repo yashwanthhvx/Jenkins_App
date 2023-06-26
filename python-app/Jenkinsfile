@@ -6,27 +6,27 @@ pipeline {
     string(name: 'TARGET_BRANCH', defaultValue: 'test', description: 'Specify the target branch')
   }
 
-  tests {
-    test('Build') {
+  stages {
+    stage('Build') {
       parallel {
-        test('sourcecode') {
+        stage('sourcecode') {
           steps {
-            git branch: "stage", url: 'https://github.com/yashwanthhvx/Python_App.git'
+            git branch: "test", url: 'https://github.com/yashwanthhvx/Python_App.git'
             echo "Executing from branch: ${env.BRANCH_NAME}"
           }
         }
       }
     }
 
-    test('Prepare') {
+    stage('Prepare') {
       steps {
         sh "sudo cp -R /var/lib/jenkins/workspace/Jenkins_App_test/python-app/* /var/lib/jenkins/workspace/Python_App_${params.TARGET_BRANCH}/Python-App/."
       }
     }
 
-    test('Deploy') {
+    stage('Deploy') {
       parallel {
-        test('Build Image') {
+        stage('Build Image') {
           steps {
             dir('Python-App') {
               sh 'sudo docker build -t python-app-test .'
@@ -35,7 +35,7 @@ pipeline {
           }
         }
 
-        test('Docker Push') {
+        stage('Docker Push') {
           steps {
             dir('Python-App') {
               sh 'sudo bash docker-credentials.sh'
@@ -45,7 +45,7 @@ pipeline {
           }
         }
 
-        test('Docker-Compose') {
+        stage('Docker-Compose') {
           when {
             expression { params.DEPLOYMENT_TYPE == 'Docker-Compose' }
           }
@@ -56,7 +56,7 @@ pipeline {
           }
         }
 
-        test('K8-Deploy') {
+        stage('K8-Deploy') {
           when {
             expression { params.DEPLOYMENT_TYPE == 'Kubernetes' }
           }
