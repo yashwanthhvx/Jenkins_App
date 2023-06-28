@@ -2,17 +2,17 @@ version: '3'
 services:
   python-app-stage1:
     container_name: python-app-stage1
-    image: hvxuser/python-app-stage
+    image: hvxuser/python-app-stage:latest
     restart: always
 
   python-app-stage2:
     container_name: python-app-stage2
-    image: hvxuser/python-app-stage
+    image: hvxuser/python-app-stage:latest
     restart: always
 
   python-app-stage3:
     container_name: python-app-stage3
-    image: hvxuser/python-app-stage
+    image: hvxuser/python-app-stage:latest
     restart: always
 
   nginx:
