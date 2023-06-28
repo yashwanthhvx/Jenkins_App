@@ -39,7 +39,7 @@ pipeline {
           steps {
             dir('Python-App') {
               sh 'sudo bash docker-credentials.sh'
-              sh 'sudo docker tag python-app-stage hvxuser/python-app-stage'
+              sh 'sudo docker tag python-app-stage:latest hvxuser/python-app-stage'
               sh 'sudo docker push hvxuser/python-app-stage'
             }
           }
