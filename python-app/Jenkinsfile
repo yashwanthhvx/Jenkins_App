@@ -39,7 +39,7 @@
           steps {
             dir('Python-App') {
               sh 'sudo bash docker-credentials.sh'
-              sh 'sudo docker tag python-app-prod hvxuser/python-app-prod'
+              sh 'sudo docker tag python-app-prod:latest hvxuser/python-app-prod'
               sh 'sudo docker push hvxuser/python-app-prod'
             }
           }
