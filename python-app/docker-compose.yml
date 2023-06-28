@@ -2,17 +2,17 @@ version: '3'
 services:
   python-app-test1:
     container_name: python-app-test1
-    image: hvxuser/python-app-test
+    image: hvxuser/python-app-test:latest
     restart: always
 
   python-app-test2:
     container_name: python-app-test2
-    image: hvxuser/python-app-test
+    image: hvxuser/python-app-test:latest
     restart: always
 
   python-app-test3:
     container_name: python-app-test3
-    image: hvxuser/python-app-test
+    image: hvxuser/python-app-test:latest
     restart: always
 
   nginx:
