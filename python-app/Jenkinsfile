@@ -30,17 +30,17 @@ pipeline {
           steps {
             dir('Python-App') {
               sh 'sudo docker build -t python-app-main .'
-              sleep 5
+              sleep 15
               /* sh 'sudo docker run -d -p 8000:5000 --name python-app-main python-app-main' */
             }
           }
         }
-
+    
         stage('Docker Push') {
           steps {
             dir('Python-App') {
-              sh 'sudo docker tag python-app-main:latest hvxuser/python-app-main'
               sh 'sudo bash docker-credentials.sh'
+              sh 'sudo docker tag python-app-main:latest hvxuser/python-app-main'
               sh 'sudo docker push hvxuser/python-app-main'
             }
           }
