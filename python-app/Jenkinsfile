@@ -30,8 +30,7 @@ pipeline {
           steps {
             dir('Python-App') {
               sh 'sudo docker build -t python-app-main .'
-              sleep 15
-              /* sh 'sudo docker run -d -p 8000:5000 --name python-app-main python-app-main' */
+           /* sh 'sudo docker run -d -p 8000:5000 --name python-app-main python-app-main' */
             }
           }
         }
