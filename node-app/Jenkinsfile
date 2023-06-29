@@ -30,7 +30,8 @@ pipeline {
           steps {
             dir('Node-App') {
               sh 'sudo docker build -t node-app-main .'
-              /* sh 'sudo docker run -d --name node-app-main -p 80:3000 node-app-main:latest' */
+              sleep 5
+           /* sh 'sudo docker run -d --name node-app-main -p 80:3000 node-app-main:latest' */
             }
           }
         }
@@ -39,7 +40,9 @@ pipeline {
           steps {
             dir('Node-App') {
               sh 'sudo bash docker-credentials.sh'
+              sleep 5
               sh 'sudo docker tag node-app-main:latest hvxuser/node-app-main'
+              sleep 5
               sh 'sudo docker push hvxuser/node-app-main'
             }
           }
